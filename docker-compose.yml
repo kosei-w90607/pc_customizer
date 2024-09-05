@@ -1,0 +1,43 @@
+version: '3.7'
+services:
+  db:
+    image: mysql:8.0.35
+    environment:
+      MYSQL_ROOT_PASSWORD: &mysql_password mysql
+      TZ: Asia/Tokyo
+      LANG: C.UTF-8
+    ports:
+      - "4306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  back:
+    platform: linux/amd64
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    env_file:
+      - ./backend/.env.local
+    command: bash -c "rm -f tmp/pids/server.pid && bundle exec rails s -b '0.0.0.0'"
+    volumes:
+      - ./backend:/app
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+    hostname: back
+    tty: true
+    stdin_open: true
+
+  front:
+    platform: linux/amd64
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    volumes:
+      - ./frontend:/app
+    command: yarn start
+    ports:
+      - "8000:3000"
+volumes:
+  mysql_data:
