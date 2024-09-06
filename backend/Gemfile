@@ -11,8 +11,6 @@ gem "mysql2", "~> 0.5"
 # Use the Puma web server [https://github.com/puma/puma]
 gem "puma", ">= 5.0"
 
-gem "rack-cors"
-
 # Build JSON APIs with ease [https://github.com/rails/jbuilder]
 # gem "jbuilder"
 
@@ -26,24 +24,64 @@ gem "rack-cors"
 # gem "bcrypt", "~> 3.1.7"
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
-gem "tzinfo-data", platforms: %i[ windows jruby ]
+gem 'tzinfo-data', '~> 2.0.6', platforms: %i[mingw mswin x64_mingw jruby]
 
 # Reduces boot times through caching; required in config/boot.rb
-gem "bootsnap", require: false
+gem 'bootsnap', '~> 1.17.0', require: false
 
 # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
 # gem "image_processing", "~> 1.2"
 
 # Use Rack CORS for handling Cross-Origin Resource Sharing (CORS), making cross-origin Ajax possible
-# gem "rack-cors"
+gem "rack-cors"
+
+# I18n
+gem 'rails-i18n', '~> 7.0.8'
+gem 'devise-i18n', '~> 1.12.0'
+gem 'carrierwave-i18n', '~> 3.0.0'
+
+# devise
+gem 'devise', '~> 4.9.3'
+
+# configration
+gem 'config', '~> 5.1.0'
+
+# enum plugin
+gem 'enumerize', '~> 2.7.0'
+
+# pagination
+gem 'kaminari', '~> 1.2.2'
+
+# remind mail
+gem 'mailkick'
 
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
-  gem "debug", platforms: %i[ mri windows ]
+  gem 'debug', platforms: %i[mri mingw mswin x64_mingw]
+
+  gem 'brakeman', '~> 6.1.0'
+  gem 'factory_bot_rails', '~> 6.4.2'
+  gem 'rails-controller-testing', '~> 1.0.5', require: false
+  gem 'rspec-rails', '~> 6.1.0'
+  gem 'rubocop', '~> 1.58.0'
+  gem 'rubocop-rails', '~> 2.22.2'
+  gem 'rubocop-rspec', '~> 2.25.0', require: false
+  gem 'shoulda-matchers', '~> 5.3.0', require: false
+  gem 'simplecov', '~> 0.22.0', require: false
+  gem 'timecop', '~> 0.9.8', require: false
 end
 
 group :development do
+  # Use console on exceptions pages [https://github.com/rails/web-console]
+  gem 'web-console', '~> 4.2.1'
+  gem 'better_errors', '~> 2.10.1'
+  gem 'binding_of_caller', '~> 1.0.0'
+
+  # mail
+  gem 'letter_opener_web', '~> 2.0.0'
+
   # Speed up commands on slow machines / big apps [https://github.com/rails/spring]
   # gem "spring"
-end
 
+  gem 'bullet', '~> 7.1.4'
+end
