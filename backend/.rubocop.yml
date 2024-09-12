@@ -1,0 +1,126 @@
+require:
+  - rubocop-rails
+  - rubocop-rspec
+
+Bundler/OrderedGems:
+  Enabled: false
+
+Layout/LineLength:
+  Exclude:
+    - config/initializers/devise.rb
+    - db/migrate/*.rb
+    - bin/bundle
+
+Metrics/AbcSize:
+  Max: 30
+  Exclude:
+    - config/initializers/active_record.rb
+    - db/migrate/*.rb
+
+Metrics/BlockLength:
+  Max: 60
+  Exclude:
+    - config/routes/*.rb
+    - db/migrate/*.rb
+    - spec/**/*.rb
+
+Metrics/ClassLength:
+  Max: 500
+
+Metrics/CyclomaticComplexity:
+  Max: 10
+  Exclude:
+    - config/initializers/active_record.rb
+
+Metrics/MethodLength:
+  Max: 30
+  Exclude:
+    - config/initializers/active_record.rb
+    - db/migrate/*.rb
+
+Metrics/ModuleLength:
+  Max: 100
+
+Metrics/ParameterLists:
+  Max: 6
+
+Metrics/PerceivedComplexity:
+  Max: 10
+  Exclude:
+    - config/initializers/active_record.rb
+
+Style/Documentation:
+  Enabled: false
+
+Style/FrozenStringLiteralComment:
+  Enabled: false
+
+Style/HashSyntax:
+  EnforcedShorthandSyntax: either
+
+Style/EmptyMethod:
+  Enabled: false
+
+Rails/ActionOrder:
+  Enabled: false
+
+Rails/Present:
+  Exclude:
+    - bin/bundle
+
+Rails/LexicallyScopedActionFilter:
+  Enabled: false
+
+FactoryBot/AssociationStyle:
+  Enabled: false
+
+RSpec/ExampleLength:
+  Enabled: false
+
+RSpec/ContextWording:
+  Enabled: false
+
+RSpec/MultipleExpectations:
+  Enabled: false
+
+RSpec/ImplicitSubject:
+  EnforcedStyle: require_implicit
+
+RSpec/RepeatedDescription:
+  Enabled: false
+
+RSpec/RepeatedExample:
+  Enabled: false
+
+RSpec/NestedGroups:
+  Max: 10
+
+RSpec/Rails/InferredSpecType:
+  Enabled: false
+
+RSpec/DescribedClass:
+  Enabled: false
+
+RSpec/MultipleMemoizedHelpers:
+  Enabled: false
+
+RSpec/IndexedLet:
+  Enabled: false
+
+RSpec/AnyInstance:
+  Enabled: false
+
+Naming/VariableNumber:
+  Exclude:
+    - spec/**/*.rb
+
+AllCops:
+  TargetRubyVersion: 3.2
+  NewCops: enable
+  SuggestExtensions: false
+  Exclude:
+    - docker/**/*
+    - db/schema.rb
+    - node_modules/**/*
+    - tmp/**/*
+    - vendor/bundle/**/*
