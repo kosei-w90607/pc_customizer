@@ -1,6 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import TopPage from './pages/TopPage';
+import TopPage from './components/pages/TopPage';
 
 const AppRoutes = () => (
   <Router>

@@ -1,4 +1,3 @@
-version: '3.7'
 services:
   db:
     image: mysql:8.0.35
@@ -22,7 +21,10 @@ services:
     volumes:
       - ./backend:/app
     ports:
-      - "3000:3000"
+      - "3030:3000"
+    environment:
+      TZ: Asia/Tokyo
+      RAILS_ENV: development
     depends_on:
       - db
     hostname: back
@@ -38,6 +40,7 @@ services:
       - ./frontend:/app
     command: yarn start
     ports:
-      - "8000:3000"
+      - "8080:3000"
+    hostname: front
 volumes:
   mysql_data:

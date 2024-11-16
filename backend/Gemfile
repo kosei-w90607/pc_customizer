@@ -42,6 +42,7 @@ gem 'carrierwave-i18n', '~> 3.0.0'
 
 # devise
 gem 'devise', '~> 4.9.3'
+gem 'devise_token_auth', '~> 1.2.3'
 
 # configration
 gem 'config', '~> 5.1.0'

@@ -4,8 +4,9 @@ Rails.application.config.middleware.insert_before 0, Rack::Cors do
 
     resource '*',
              headers: :any,
+             expose: ["access-token", "expiry", "token-type", "uid", "client"],
              methods: %i[get post put patch delete options head],
-             expose: ['Access-Control-Allow-Origin']
+             credentials: true
 
     Rails.logger.info 'CORS headers added for origin http://localhost:8080'
   end

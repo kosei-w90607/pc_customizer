@@ -1,31 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import Slider from 'react-slick';
-import Header from '../components/Header';
-import Footer from '../components/Footer';
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import Background from '../assets/images/Top_images.jpg';
-import PcImage1 from '../assets/images/Slider-PC-1.jpg';
-import PcImage2 from '../assets/images/Slider-PC-2.jpg';
-import PcImage3 from '../assets/images/Slider-PC-3.png';
-import EntrustImage from '../assets/images/Entrust-PC.png';
+import Background from '/src/assets/images/Top_images.jpg';
+import PcImage1 from '/src/assets/images/Slider-PC-1.jpg';
+import PcImage2 from '/src/assets/images/Slider-PC-2.jpg';
+import PcImage3 from '/src/assets/images/Slider-PC-3.png';
+import EntrustImage from '/src/assets/images/Entrust-PC.png';
 import { ChevronRightIcon, ChevronLeftIcon } from '@heroicons/react/24/solid';
 
 const TopPage = () => {
-  const [message, setMessage] = useState('');
-
-  useEffect(() => {
-    console.log("Fetching data from API...");
-
-    axios.get('http://localhost:3000/api/top')
-      .then(response => {
-        setMessage(response.data.message);
-      })
-      .catch(error => {
-        console.error("There was an error fetching the data!", error);
-      });
-  }, []);
 
   const NextArrow = (props) => {
     const { className, style, onClick } = props;
@@ -96,7 +81,6 @@ const TopPage = () => {
 
   return (
     <div className="flex flex-col min-h-screen">
-      <Header />
       <main className="flex-grow container mx-auto p-4">
         {/* 1. 画像背景とタイトル、登録ボタン */}
         <section className="relative h-[80vh] bg-center-80 bg-cover" style={{ backgroundImage: `url(${Background})` }}>
@@ -264,7 +248,6 @@ const TopPage = () => {
           </div>
         </section>
       </main>
-      <Footer />
     </div>
   );
 };

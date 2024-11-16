@@ -10,17 +10,28 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_09_06_090335) do
+ActiveRecord::Schema[7.1].define(version: 2024_09_18_011925) do
   create_table "users", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
-    t.string "email", null: false, comment: "メールアドレス"
-    t.string "encrypted_password", null: false, comment: "パスワード"
-    t.string "reset_password_token", comment: "パスワード再設定用トークン"
-    t.datetime "reset_password_sent_at", comment: "パスワード再設定送信日時"
-    t.string "name", null: false, comment: "氏名"
+    t.string "provider", default: "email", null: false, comment: "認証プロバイダー"
+    t.string "uid", default: "", null: false, comment: "ユーザーの一意な識別子"
+    t.string "encrypted_password", default: "", null: false, comment: "暗号化されたパスワード"
+    t.string "reset_password_token", comment: "パスワードリセット用のトークン"
+    t.datetime "reset_password_sent_at", comment: "パスワードリセットトークンの送信日時"
+    t.boolean "allow_password_change", default: false, comment: "パスワード変更の許可フラグ"
+    t.datetime "remember_created_at", comment: "記憶トークンの生成日時"
+    t.string "confirmation_token", comment: "確認用トークン"
+    t.datetime "confirmed_at", comment: "確認完了日時"
+    t.datetime "confirmation_sent_at", comment: "確認メール送信日時"
+    t.string "unconfirmed_email", comment: "未確認の新しいメールアドレス"
+    t.string "name", comment: "ユーザーの名前"
+    t.string "email", comment: "ユーザーのメールアドレス"
+    t.text "tokens", comment: "認証トークン"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["email"], name: "index_users_on_email", unique: true
-    t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
+    t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true, comment: "確認トークンの一意制約インデックス"
+    t.index ["email"], name: "index_users_on_email", unique: true, comment: "メールアドレスの一意制約インデックス"
+    t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true, comment: "パスワードリセットトークンの一意制約インデックス"
+    t.index ["uid", "provider"], name: "index_users_on_uid_and_provider", unique: true, comment: "UIDとプロバイダーの複合一意制約インデックス"
   end
 
 end

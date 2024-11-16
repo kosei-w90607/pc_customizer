@@ -1,11 +1,8 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: [
-    "./src/**/*.{js,jsx,ts,tsx}", // すべてのJS、JSX、TS、TSXファイルをスキャン
-  ],
   future: {
   },
-  purge: ["./src/**/*.{js,jsx,ts,tsx}", "./public/index.html"],
+  content: ["./src/**/*.{js,jsx,ts,tsx}", "./public/index.html"],
   theme: {
     extend: {
       colors: {
@@ -18,6 +15,7 @@ module.exports = {
   },
   variants: {},
   plugins: [require("daisyui")],
+  important: true,
   daisyui: {
     themes: ["light", "dark", "cupcake", "aqua", "pastel"],
   },
