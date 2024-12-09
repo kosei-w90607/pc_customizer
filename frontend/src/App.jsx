@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useContext, createContext } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 // ログイン前
 import TopPage from './components/pages/TopPage';
@@ -11,20 +11,25 @@ import PasswordResetPage from './components/pages/PasswordResetPage';
 // ログイン後
 import LoggedInTopPage from './components/pages/LoggedInTopPage';
 import DashboardPage from './components/pages/DashboardPage';
-// component
+import PcExpertConfigPage from './components/pages/PcExpertConfigPage';
+import PcCustomConfigPage from './components/pages/PcCustomConfigPage';
+import PcConfigDetailsPage from './components/pages/PcConfigDetailsPage';
+import DetailsPage from './components/pages/details/DetailsPage';
+import PcCustomizeEditPage from './components/pages/PcCustomizeEditPage';
+import PcSaveConfigPage from './components/pages/PcSaveConfigPage';
+// コンポーネント
 import Header from './components/layouts/Header';
 import Footer from './components/layouts/Footer';
 
 import { getCurrentUser } from './lib/api/auth';
 
-import { CircularProgress, Box } from '@mui/material';
-
-export const AuthContext = createContext();
+import { AuthContext } from './contexts/AuthContext';
+import PrivateRoute from './components/PrivateRoute';
 
 const App = () => {
   const [loading, setLoading] = useState(true);
   const [isSignedIn, setIsSignedIn] = useState(false);
-  const [currentUser, setCurrentUser] = useState();
+  const [currentUser, setCurrentUser] = useState(null);
 
   const handleGetCurrentUser = async () => {
     try {
@@ -51,21 +56,6 @@ const App = () => {
     handleGetCurrentUser();
   }, []);
 
-  const PrivateRoute = ({ element }) => {
-    const { isSignedIn, loading } = useContext(AuthContext);
-
-    if (loading) {
-      return (
-        <Box display="flex" justifyContent="center" alignItems="center" height="100vh">
-          <CircularProgress />
-        </Box>
-      );
-    }
-
-    return isSignedIn ? element : <Navigate to="/login" />;
-  };
-
-
   return (
     <AuthContext.Provider
       value={{
@@ -79,18 +69,75 @@ const App = () => {
     >
       <Router>
         <Header/>
-          <Routes>
-            <Route path="/" element={isSignedIn ? <LoggedInTopPage /> : <TopPage />} />
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/register" element={<RegisterPage />} />
+        <Routes>
+          {/* パブリックルート */}
+          <Route path="/" element={isSignedIn ? <LoggedInTopPage /> : <TopPage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
 
-            <Route path="/password_reset" element={<PasswordResetRequestPage />} />
-            <Route path="/password_reset/:token" element={<PasswordResetPage />} />
+          <Route path="/password_reset" element={<PasswordResetRequestPage />} />
+          <Route path="/password_reset/:token" element={<PasswordResetPage />} />
 
-            <Route path="/dashboard" element={<PrivateRoute element={<DashboardPage />} />} />
+          {/* 保護されたルート */}
+          <Route
+            path="/dashboard"
+            element={
+              <PrivateRoute>
+                <DashboardPage />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/pc_expert_config"
+            element={
+              <PrivateRoute>
+                <PcExpertConfigPage />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/pc_expert_config/:budget"
+            element={
+              <PrivateRoute>
+                <PcConfigDetailsPage />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/details/:id"
+            element={
+              <PrivateRoute>
+                <DetailsPage />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/pc_custom_config"
+            element={
+              <PrivateRoute>
+                <PcCustomConfigPage />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/pc_customize_edit"
+            element={
+              <PrivateRoute>
+                <PcCustomizeEditPage />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/pc_save_config"
+            element={
+              <PrivateRoute>
+                <PcSaveConfigPage />
+              </PrivateRoute>
+            }
+          />
 
-            {/* 他のルート */}
-          </Routes>
+          {/* 他のルート */}
+        </Routes>
         <Footer/>
       </Router>
     </AuthContext.Provider>

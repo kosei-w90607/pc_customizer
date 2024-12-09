@@ -2,7 +2,7 @@ import React, { useState, useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
 // context
-import { AuthContext } from '/src/App';
+import { AuthContext } from '../../../contexts/AuthContext';
 // api
 import { signIn } from '/src/lib/api/auth';
 // component

@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import Pagination from '../layouts/Pagination.jsx';
 
 // import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { configurations as initialConfigurations } from '/src/data/configurations';
+import { AuthContext } from '../../contexts/AuthContext';
 
 const DashboardPage = () => {
   const [fetchedConfigurations, setFetchedConfigurations] = useState([]);
@@ -16,6 +17,9 @@ const DashboardPage = () => {
   const indexOfLastConfig = currentPage * configurationsPerPage;
   const indexOfFirstConfig = indexOfLastConfig - configurationsPerPage;
   const currentConfigs = fetchedConfigurations.slice(indexOfFirstConfig, indexOfLastConfig);
+
+  const navigate = useNavigate();
+  const { isAuthenticated } = useContext(AuthContext)
 
   useEffect(() => {
     // ダミーデータを使用
@@ -43,6 +47,18 @@ const DashboardPage = () => {
     setSelectedConfig(newSelected || null); // 存在しない場合はnullに設定
   };
 
+  const handleExpertClick = () => {
+    navigate('/pc_expert_config');
+    // 遷移前に必要な処理があればここに追加
+    console.log('おまかせ構成が選択されました');
+  };
+
+  const handleCustomClick = () => {
+    navigate('/pc_custom_config');
+    // 遷移前に必要な処理があればここに追加
+    console.log('カスタム構成が選択されました');
+  };
+
   if (fetchedConfigurations.length === 0) {
     return (
       <div className="container mx-auto p-4">
@@ -62,7 +78,7 @@ const DashboardPage = () => {
         {/* 左半分: 構成リスト */}
         <div className="w-1/2 pr-4">
           <ul>
-            {currentConfigs.map((config) => (
+            {currentConfigs.map((config, index) => (
               <li
                 key={config.id}
                 className={`flex items-center p-2 cursor-pointer hover:bg-gray-200 ${
@@ -70,7 +86,7 @@ const DashboardPage = () => {
                 }`}
                 onClick={() => setSelectedConfig(config)}
               >
-                <span className="w-6">{config.id}</span>
+                <span className="w-6">{index + 1}</span>
                 <span className="ml-2">{config.name}</span>
               </li>
             ))}
@@ -90,10 +106,7 @@ const DashboardPage = () => {
             {/* おまかせ構成ボタン */}
             <button
               className="w-full px-4 py-2 bg-custom-blue text-white rounded-md shadow hover:bg-green-500 transition-colors"
-              onClick={() => {
-                // おまかせ構成ボタンのクリックハンドラー
-                console.log('おまかせ構成が選択されました');
-              }}
+              onClick={handleExpertClick}
             >
               おまかせ構成
             </button>
@@ -101,10 +114,7 @@ const DashboardPage = () => {
             {/* カスタム構成ボタン */}
             <button
               className="w-full px-4 py-2 bg-custom-blue text-white rounded-md shadow hover:bg-blue-500 transition-colors"
-              onClick={() => {
-                // カスタム構成ボタンのクリックハンドラー
-                console.log('カスタム構成が選択されました');
-              }}
+              onClick={handleCustomClick}
             >
               カスタム構成
             </button>

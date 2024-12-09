@@ -1,6 +1,10 @@
 {
   "compilerOptions": {
-    "baseUrl": "src"
+    "baseUrl": "src",
+    "typeRoots": ["./node_modules/@types", "./types"],  // 型定義ファイルの検索パスを指定
+    "paths": {
+      "*": ["./*"]
+    }
   },
   "include": ["src"]
 }

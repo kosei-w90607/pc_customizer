@@ -10,7 +10,14 @@ import PcImage3 from '/src/assets/images/Slider-PC-3.png';
 import EntrustImage from '/src/assets/images/Entrust-PC.png';
 import { ChevronRightIcon, ChevronLeftIcon } from '@heroicons/react/24/solid';
 
+import { useNavigate } from 'react-router-dom';
+
 const TopPage = () => {
+  const navigate = useNavigate();
+
+  const handleDashboardClick = () => {
+    navigate('/dashboard');
+  };
 
   const NextArrow = (props) => {
     const { className, style, onClick } = props;
@@ -89,7 +96,10 @@ const TopPage = () => {
             <h1 className="text-3xl sm:text-4xl md:text-3xl lg:text-4xl xl:text-5xl 2xl:text-6xl font-bold mb-4 sm:mb-6 md:mb-6 lg:mb-6 xl:mb-8 2xl:mb-10">
               PC構成支援ツール
             </h1>
-            <button className="px-4 sm:px-6 md:px-6 lg:px-6 xl:px-8 2xl:px-10 py-2 sm:py-3 md:py-3 lg:py-3 xl:py-4 2xl:py-5 bg-custom-blue text-black text-sm sm:text-base md:text-base lg:text-base xl:text-lg 2xl:text-xl rounded">
+            <button
+              className="px-4 sm:px-6 md:px-6 lg:px-6 xl:px-8 2xl:px-10 py-2 sm:py-3 md:py-3 lg:py-3 xl:py-4 2xl:py-5 bg-custom-blue text-black text-sm sm:text-base md:text-base lg:text-base xl:text-lg 2xl:text-xl rounded"
+              onClick={handleDashboardClick}
+            >
               ダッシュボードはこちら
             </button>
           </div>

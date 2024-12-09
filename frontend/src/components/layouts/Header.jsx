@@ -1,26 +1,20 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import Cookies from 'js-cookie';
-import {
-  AppBar,
-  Toolbar,
-  Typography,
-  Button,
-  IconButton,
-  Box,
-} from '@mui/material';
-import MenuIcon from '@mui/icons-material/Menu';
-// api
-import { signOut } from '../../lib/api/auth';
-// context
-import { AuthContext } from '../../App';
-// component
+import { AuthContext } from '../../contexts/AuthContext';
 import HeaderDrawer from './HeaderDrawer';
+
+// API
+import { signOut } from '../../lib/api/auth';
 
 const Header = () => {
   const { isSignedIn, setIsSignedIn, currentUser, setCurrentUser } = useContext(AuthContext);
   const navigate = useNavigate();
-  console.log('Header AuthContext:', { isSignedIn, currentUser });
+
+  useEffect(() => {
+    console.log('isSignedIn changed to:', isSignedIn);
+    console.log('currentUser changed to:', currentUser);
+  }, [isSignedIn, currentUser]);
 
   const handleLogout = async () => {
     try {
@@ -36,11 +30,6 @@ const Header = () => {
 
         navigate('/login');
         console.log('ログアウトに成功しました');
-        useEffect(() => {
-          console.log('isSignedIn changed to:', isSignedIn);
-          console.log('currentUser changed to:', currentUser);
-        }, [isSignedIn, currentUser]);
-
       } else {
         console.log('ログアウトに失敗しました');
       }
@@ -49,18 +38,19 @@ const Header = () => {
     }
   };
 
-  const [open, setOpen] = useState(false);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
   const handleDrawerToggle = () => {
-    setOpen((prevOpen) => !prevOpen);
+    setIsDrawerOpen((prev) => !prev);
   };
 
   const drawerItems = isSignedIn
     ? [
+        { label: `👤 ${currentUser.uid}さんがログイン中`, isUserInfo: true },
         { label: 'トップページ', path: '/' },
         { label: 'PC構成一覧', path: '/dashboard' },
-        { label: 'おまかせ構成', path: '/omakase' },
-        { label: 'カスタマイズ', path: '/customize' },
+        { label: 'おまかせ構成', path: '/pc_expert_config' },
+        { label: 'カスタマイズ', path: '/pc_custom_config' },
         { label: '構成出力', path: '/output' },
         { label: 'ログアウト', onClick: handleLogout },
       ]
@@ -72,56 +62,68 @@ const Header = () => {
 
   return (
     <>
-      <AppBar position="static" className="bg-custom-blue text-white">
-        <Toolbar className="flex justify-between">
-          {/* 左端: ロゴ */}
-          <Link to="/" className="text-white no-underline">
-            <Typography variant="h6">
-              My App
-            </Typography>
-          </Link>
-
-          {/* 右端: ハンバーガーメニューとボタン */}
-          <Box className="flex items-center">
-            {/* ログイン前のボタン */}
-            {!isSignedIn && (
-              <Box className="hidden md:flex space-x-4 mr-2">
-                <Link to="/register" className="btn btn-white text-custom-blue">
-                  会員登録
+      <nav className="bg-custom-blue text-white shadow-md">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between h-16 items-center">
+            {/* 左側: ロゴとハンバーガーメニュー */}
+            <div className="flex items-center space-x-4">
+              {/* ロゴ */}
+              <div className="flex-shrink-0">
+                <Link to="/" className="text-white text-lg font-bold">
+                  My App
                 </Link>
-                <Link to="/login" className="btn btn-outline btn-white text-white">
-                  ログイン
-                </Link>
-              </Box>
-            )}
+              </div>
+            </div>
 
-            {/* ログイン後のユーザー情報 */}
-            {isSignedIn && currentUser && (
-              <Box className="hidden md:flex mr-4">
-                <Typography variant="body1">
-                  {currentUser.uid}さんがログイン中
-                </Typography>
-              </Box>
-            )}
+            {/* 右側: ユーザー情報とログイン/ログアウト */}
+            <div className="flex items-center space-x-4">
+              {!isSignedIn ? (
+                <>
+                  <Link
+                    to="/register"
+                    className="btn btn-ghost text-white hover:bg-blue-700 rounded-md text-base"
+                  >
+                    会員登録
+                  </Link>
+                  <Link
+                    to="/login"
+                    className="btn btn-outline text-white border-white hover:bg-blue-700 hover:border-blue-700 rounded-md text-base"
+                  >
+                    ログイン
+                  </Link>
+                </>
+              ) : (
+                <div className="flex items-center space-x-2 hidden md:flex">
+                  {currentUser && (
+                    <span className="text-white text-base">
+                      {currentUser.uid}さんがログイン中
+                    </span>
+                  )}
+                </div>
+              )}
 
-            {/* ハンバーガーメニューアイコン */}
-            <IconButton
-              edge="end"
-              color="inherit"
-              aria-label="menu"
-              onClick={handleDrawerToggle}
-              className="md:ml-0"
-            >
-              <MenuIcon />
-            </IconButton>
-          </Box>
-        </Toolbar>
-      </AppBar>
-      <HeaderDrawer
-        open={open}
-        handleDrawerToggle={handleDrawerToggle}
-        drawerItem={drawerItems}
-      />
+              {/* ハンバーガーメニュー（常に表示） */}
+              <button
+                onClick={handleDrawerToggle}
+                className="text-white hover:text-gray-300 focus:outline-none text-2xl"
+                aria-label="メニューを開く"
+              >
+                {/* ハンバーガーアイコン */}
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  {isDrawerOpen ? (
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  ) : (
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                  )}
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </nav>
+
+      {/* HeaderDrawer コンポーネント */}
+      <HeaderDrawer open={isDrawerOpen} handleDrawerToggle={handleDrawerToggle} drawerItems={drawerItems} />
     </>
   );
 };

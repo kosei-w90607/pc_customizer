@@ -15,7 +15,6 @@ module.exports = {
   },
   variants: {},
   plugins: [require("daisyui")],
-  important: true,
   daisyui: {
     themes: ["light", "dark", "cupcake", "aqua", "pastel"],
   },
