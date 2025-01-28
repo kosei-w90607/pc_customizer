@@ -1,18 +1,138 @@
 // src/pages/details/DetailsPage.jsx
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom'; // React Router
 import { configurations } from '../../../data/configurations'; // データのインポート
+import axios from 'axios';
 
 const DetailsPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-  const config = configurations.find(config => config.id === parseInt(id));
+  const [config, setConfig] = useState(null);
+  const [categories, setCategories] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  const desiredCategories = ['OS', 'CPU', 'メインメモリ', 'GPU', 'ストレージ'];
+
+  // const config = configurations.find(config => config.id === parseInt(id));
+
+  // if (!config) {
+  //   return <div className="text-center mt-10">構成が見つかりません。</div>;
+  // }
+
+  // 構成データをAPIから取得
+  useEffect(() => {
+    console.log('API Base URL:',import.meta.env.VITE_API_BASE_URL);
+    // 環境変数からAPIベースURLを取得
+    const apiUrl = `${import.meta.env.VITE_API_BASE_URL}/configurations/${id}`;
+
+    axios.get(apiUrl)
+      .then(response => {
+        setConfig(response.data);
+        setLoading(false);
+        console.log('取得した構成データ:', response.data); // デバッグ用
+      })
+      .catch(error => {
+        if (error.response && error.response.status === 404) {
+          setError('構成が見つかりません。');
+        } else {
+          setError('データの取得に失敗しました。');
+        }
+        setLoading(false);
+      });
+  }, [id]);
+
+  // カテゴリデータをAPIから取得
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const apiUrlCate = `${import.meta.env.VITE_API_BASE_URL}/categories`;
+        const response = await axios.get(apiUrlCate);
+        console.log('取得したカテゴリデータ:', response.data); // デバッグ用
+        if (Array.isArray(response.data)) {
+          setCategories(response.data);
+        } else {
+          throw new Error('不正なデータ形式');
+        }
+      } catch (error) {
+        if (axios.isAxiosError(error)) {
+          console.error('カテゴリの取得に失敗しました:', {
+            message: error.message,
+            status: error.response?.status,
+            data: error.response?.data,
+          });
+        } else {
+          console.error('未知のエラーが発生しました:', error);
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCategories();
+  }, []);
+
+  if (loading) {
+    return <div className="text-center mt-10">読み込み中...</div>;
+  }
+
+  if (error) {
+    return <div className="text-center mt-10 text-red-500">{error}</div>;
+  }
 
   if (!config) {
     return <div className="text-center mt-10">構成が見つかりません。</div>;
   }
+
+  // カテゴリIDをカテゴリ名に変換する関数（例として）
+  const getCategoryName = (categoryId) => {
+    const categories = {
+      1: 'OS',
+      2: 'CPU',
+      3: 'Intel Core',
+      4: 'Ryzen',
+      5: 'CPUクーラー',
+      6: 'GPU',
+      7: '30xx_series',
+      8: '40xx_series',
+      9: 'マザーボード（Motherboard）',
+      10: 'メインメモリ（RAM）',
+      11: 'ストレージ',
+      12: 'SSD',
+      13: 'HDD',
+      14: '電源ユニット（Power Supply Unit, PSU）',
+      15: 'PCケース（Case）',
+      16: '追加冷却（Additional Cooling）',
+      17: '光学ドライブ（Optical Drive）',
+      18: 'メインメモリ',
+    };
+    return categories[categoryId] || 'その他';
+  };
+
+  // パーツをカテゴリ名ごとに整理する関数
+  const getPartsMap = (configurationParts) => {
+    const partsMap = {};
+
+    configurationParts.forEach((configPart) => {
+      const categoryName = getCategoryName(configPart.part.category_id);
+      if (partsMap[categoryName]) {
+        if (Array.isArray(partsMap[categoryName])) {
+          partsMap[categoryName].push(configPart.part.name);
+        } else {
+          partsMap[categoryName] = [partsMap[categoryName], configPart.part.name];
+        }
+      } else {
+        partsMap[categoryName] = configPart.part.name;
+      }
+    });
+
+    return partsMap;
+  };
+
+  // カテゴリ名をキーとするパーツのオブジェクトを取得
+  const partsMap = getPartsMap(config.configuration_parts);
 
   return (
     <div className="relative">
@@ -118,9 +238,21 @@ const DetailsPage = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    <tr>
+                  {Object.keys(partsMap)
+                    .filter((category) => desiredCategories.includes(category))
+                    .map((categoryName) => (
+                      <tr key={categoryName}>
+                        <td className="px-2 py-1">{categoryName}</td>
+                        <td className="px-2 py-1">
+                          {Array.isArray(partsMap[categoryName])
+                            ? partsMap[categoryName].join(', ')
+                            : partsMap[categoryName]}
+                        </td>
+                      </tr>
+                    ))}
+                    {/* <tr>
                       <td className="px-2 py-1">OS</td>
-                      <td className="px-2 py-1">{config.os}</td>
+                      <td className="px-2 py-1">{config.name}</td>
                     </tr>
                     <tr>
                       <td className="px-2 py-1">CPU</td>
@@ -137,7 +269,7 @@ const DetailsPage = () => {
                     <tr>
                       <td className="px-2 py-1">ストレージ</td>
                       <td className="px-2 py-1">{config.storage}</td>
-                    </tr>
+                    </tr> */}
                   </tbody>
                 </table>
               </div>

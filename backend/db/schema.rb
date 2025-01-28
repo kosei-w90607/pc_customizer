@@ -10,12 +10,15 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_11_30_084740) do
+ActiveRecord::Schema[7.1].define(version: 2025_01_12_203104) do
   create_table "categories", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "name", null: false, comment: "カテゴリーの名前"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "parent_id", comment: "親カテゴリへの参照"
+    t.text "description", comment: "カテゴリーの説明"
     t.index ["name"], name: "index_categories_on_name", unique: true
+    t.index ["parent_id"], name: "index_categories_on_parent_id"
   end
 
   create_table "configuration_parts", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
@@ -34,7 +37,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_11_30_084740) do
     t.string "image", comment: "構成の画像"
     t.decimal "cost", precision: 10, scale: 2, null: false, comment: "構成の総コスト"
     t.text "memo", comment: "メモや注記"
-    t.string "budget", null: false, comment: "予算"
+    t.string "budget", limit: 20, null: false, comment: "予算"
     t.string "configuration_type", null: false, comment: "構成のタイプ"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -74,12 +77,14 @@ ActiveRecord::Schema[7.1].define(version: 2024_11_30_084740) do
     t.text "tokens", comment: "認証トークン"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "role", default: "user", null: false, comment: "ユーザーの役割 (admin, userなど)"
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true, comment: "確認トークンの一意制約インデックス"
     t.index ["email"], name: "index_users_on_email", unique: true, comment: "メールアドレスの一意制約インデックス"
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true, comment: "パスワードリセットトークンの一意制約インデックス"
     t.index ["uid", "provider"], name: "index_users_on_uid_and_provider", unique: true, comment: "UIDとプロバイダーの複合一意制約インデックス"
   end
 
+  add_foreign_key "categories", "categories", column: "parent_id"
   add_foreign_key "configuration_parts", "configurations", on_delete: :cascade
   add_foreign_key "configuration_parts", "parts"
   add_foreign_key "configurations", "users"

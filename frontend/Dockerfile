@@ -1,10 +1,33 @@
-FROM --platform=linux/amd64 node:21.5.0
+# ビルドステージ
+FROM --platform=linux/amd64 node:21.5.0 AS build
+
 WORKDIR /app
-COPY package.json ./
-COPY yarn.lock ./
-RUN yarn install
+
+COPY package.json package-lock.json ./
+
+RUN npm install
+
 COPY . .
-RUN yarn build
-RUN yarn global add serve
+
+RUN npm run build
+
+# 本番ステージ
+FROM --platform=linux/amd64 node:21.5.0
+
+WORKDIR /app
+
+# serveをグローバルにインストール
+RUN npm install -g serve
+
+COPY --from=build /app/build ./build
+
+COPY entrypoint.sh /usr/local/bin/entrypoint.sh
+
+RUN chmod +x /usr/local/bin/entrypoint.sh
+
+ENV PORT=3000
+ENV NODE_ENV=production
+
 EXPOSE 3000
-CMD sh -c 'serve -s build -l tcp://0.0.0.0:$PORT'
+
+CMD ["sh", "/usr/local/bin/entrypoint.sh"]

@@ -8,6 +8,12 @@ Rails.application.routes.draw do
       resources :users, only: %i[new create destroy]
       resources :password_resets, only: %i[new create edit update]
 
+      resources :configurations, only: [:create, :index, :show, :update, :destroy]
+      resources :categories, only: [:index, :show] do
+        resources :parts, only: [:index, :show, :create, :update, :destroy]
+      end
+      resources :parts, only: [:index, :show, :create, :update, :destroy]
+
       mount_devise_token_auth_for 'User', at: 'auth', controllers: {
         registrations: 'api/v1/auth/registrations',
         sessions: 'api/v1/auth/sessions',

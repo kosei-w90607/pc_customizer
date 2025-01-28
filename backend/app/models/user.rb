@@ -5,4 +5,16 @@ class User < ApplicationRecord
          :recoverable, :rememberable, :validatable, :confirmable
 
   include DeviseTokenAuth::Concerns::User
+
+  # バリデーション
+  validates :role, presence: true, inclusion: { in: %w[admin user] }
+
+  # スコープ
+  scope :admins, -> { where(role: 'admin') }
+  scope :general_users, -> { where(role: 'user') }
+
+  # 管理者判定メソッド
+  def admin?
+    role == 'admin'
+  end
 end

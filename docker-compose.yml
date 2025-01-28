@@ -1,3 +1,5 @@
+version: '3.8'
+
 services:
   db:
     image: mysql:8.0.35
@@ -38,9 +40,59 @@ services:
       dockerfile: Dockerfile
     volumes:
       - ./frontend:/app
-    command: yarn start
+      - /app/node_modules
+    command: sh -c 'npm run dev'
     ports:
       - "8080:3000"
     hostname: front
+    environment:
+    - PORT=3000
+    - HOST=0.0.0.0
+    - NODE_ENV=development
+    depends_on:
+      - back
+
 volumes:
   mysql_data:
+
+# 開発環境の場合:
+# environment セクションで NODE_ENV=development を設定。
+# これにより、entrypoint.sh が Vite の開発サーバーを起動します。
+
+# 本番環境の場合:
+# 同じ docker-compose.yml を使用しつつ、実行時に環境変数をオーバーライドすることで本番環境として起動することが可能です。
+# 例えば、本番環境では以下のように環境変数を設定します：
+
+# docker-compose up -d --build front
+# docker-compose exec front sh -c 'export NODE_ENV=production && export PORT=3000 && sh /usr/local/bin/entrypoint.sh'
+# または、docker-compose.yml 内でプロファイルや拡張機能を使用して環境ごとの設定を行うこともできますが、ユーザーの要望により1つのファイルで管理しています。
+
+# 開発環境での確認
+# Docker イメージをビルド:
+# docker-compose build front
+
+# 開発環境として起動:
+# docker-compose up -d front
+
+# ブラウザで確認:
+# http://localhost:8080/
+# Vite の開発サーバーが正常に動作していることを確認します。コードの変更がリアルタイムで反映される（ホットリロード）が期待されます
+
+# 本番環境での確認
+# 開発モードを停止:
+
+
+# docker-compose stop front
+# docker-compose rm front
+# 本番環境として起動:
+
+
+# docker-compose build front
+# docker-compose run -e NODE_ENV=production -e PORT=3000 front
+# または、docker-compose.yml の environment セクションをコメントアウトし、本番環境用に編集してから再起動します。
+
+# ブラウザで確認:
+
+
+# http://localhost:8080/
+# serve によって提供されるビルド済みの静的ファイルが正しく表示されることを確認します。
